@@ -1,36 +1,34 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📖 سورة</title>
-<link rel="stylesheet" href="style.css">
+<title>📖 تفاصيل السورة</title>
+<style>
+body { font-family:'Tahoma',sans-serif; direction:rtl; text-align:center; background:#f0f4f8; margin:0; padding:10px; }
+h1 { font-size:22px; color:#4B0082; margin-bottom:10px; }
+.ayah { background:#fff; margin:5px auto; padding:8px; border-radius:8px; max-width:500px; box-shadow:0 2px 5px rgba(0,0,0,0.1); font-size:18px; }
+a.back { display:inline-block; margin:10px; padding:6px 12px; background:#4CAF50; color:#fff; border-radius:6px; text-decoration:none; }
+</style>
 </head>
 <body>
-<h1 id="surahTitle">...</h1>
-<div id="ayahs">جاري التحميل...</div>
-<button onclick="window.location.href='index.html'">🔙 رجوع</button>
+<div id="content">جارٍ التحميل...</div>
+<a href="index.html" class="back">🔙 رجوع</a>
 <script>
-fetch('data/quran.json')
+const urlParams = new URLSearchParams(window.location.search);
+const index = parseInt(urlParams.get('index'));
+fetch('https://cdn.jsdelivr.net/npm/quran-json@3.1.2/dist/quran.json')
   .then(res => res.json())
   .then(data => {
-    let index = localStorage.getItem('selectedSurah');
-    if (index !== null) {
-      let surah = data.surahs[index];
-      document.getElementById('surahTitle').textContent = surah.name;
-      let ayahsDiv = document.getElementById('ayahs');
-      ayahsDiv.innerHTML = '';
-      surah.ayahs.forEach((ayah, i) => {
-        let p = document.createElement('p');
-        p.textContent = (i+1) + ' - ' + ayah;
-        ayahsDiv.appendChild(p);
-      });
-    } else {
-      document.getElementById('ayahs').textContent = '❌ لم يتم تحديد سورة';
-    }
+    const surah = data.data[index];
+    let html = `<h1>${surah.name} (${surah.ayahs.length} آية)</h1>`;
+    surah.ayahs.forEach(ayah => {
+      html += `<div class="ayah">${ayah}</div>`;
+    });
+    document.getElementById('content').innerHTML = html;
   })
   .catch(err => {
-    document.getElementById('ayahs').textContent = '❌ خطأ في التحميل';
+    document.getElementById('content').textContent = 'فشل التحميل، تحقق من الاتصال بالإنترنت.';
     console.error(err);
   });
 </script>
