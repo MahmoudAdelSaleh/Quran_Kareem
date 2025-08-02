@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📖 سورة</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1 id="surahTitle">...</h1>
+<div id="ayahs">جاري التحميل...</div>
+<button onclick="window.location.href='index.html'">🔙 رجوع</button>
+<script>
+fetch('data/quran.json')
+  .then(res => res.json())
+  .then(data => {
+    let index = localStorage.getItem('selectedSurah');
+    if (index !== null) {
+      let surah = data.surahs[index];
+      document.getElementById('surahTitle').textContent = surah.name;
+      let ayahsDiv = document.getElementById('ayahs');
+      ayahsDiv.innerHTML = '';
+      surah.ayahs.forEach((ayah, i) => {
+        let p = document.createElement('p');
+        p.textContent = (i+1) + ' - ' + ayah;
+        ayahsDiv.appendChild(p);
+      });
+    } else {
+      document.getElementById('ayahs').textContent = '❌ لم يتم تحديد سورة';
+    }
+  })
+  .catch(err => {
+    document.getElementById('ayahs').textContent = '❌ خطأ في التحميل';
+    console.error(err);
+  });
+</script>
+</body>
+</html>
