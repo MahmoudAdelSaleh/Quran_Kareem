@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📖 القرآن الكريم</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('✅ Service Worker مسجَّل'))
+    .catch(err => console.error('❌ Service Worker خطأ', err));
+}
+</script>
+</head>
+<body>
+<h1>📖 القرآن الكريم</h1>
+<div id="surahList">جاري التحميل...</div>
+<script>
+fetch('data/quran.json')
+  .then(res => res.json())
+  .then(data => {
+    const list = document.getElementById('surahList');
+    list.innerHTML = '';
+    data.surahs.forEach((surah, index) => {
+      let btn = document.createElement('button');
+      btn.textContent = (index+1) + ' - ' + surah.name;
+      btn.onclick = () => {
+        localStorage.setItem('selectedSurah', index);
+        window.location.href = 'surah.html';
+      };
+      list.appendChild(btn);
+    });
+  })
+  .catch(err => {
+    document.getElementById('surahList').textContent = '❌ خطأ في التحميل';
+    console.error(err);
+  });
+</script>
+</body>
+</html>
