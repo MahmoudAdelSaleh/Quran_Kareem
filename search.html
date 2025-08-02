@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔍 بحث في القرآن الكريم</title>
+<style>
+body { font-family:'Tahoma',sans-serif; direction:rtl; text-align:center; background:#f0f4f8; margin:0; padding:10px; }
+h1 { font-size:22px; color:#4B0082; margin-bottom:10px; }
+input[type="text"] { width:60%; padding:6px; font-size:16px; border-radius:6px; border:1px solid #ccc; }
+button { padding:6px 12px; font-size:16px; margin:5px; border:none; border-radius:6px; background:#4CAF50; color:white; cursor:pointer; }
+button:hover { background:#45a049; }
+.result { background:#fff; margin:5px auto; padding:8px; border-radius:8px; max-width:500px; box-shadow:0 2px 5px rgba(0,0,0,0.1); font-size:18px; }
+.surah-name { color:#4B0082; font-weight:bold; margin-bottom:4px; }
+a.back { display:inline-block; margin:10px; padding:6px 12px; background:#4CAF50; color:#fff; border-radius:6px; text-decoration:none; }
+</style>
+</head>
+<body>
+<h1>🔍 بحث في القرآن الكريم</h1>
+<input type="text" id="query" placeholder="اكتب كلمة للبحث">
+<button onclick="searchAyahs()">بحث</button>
+<div id="results">اكتب كلمة واضغط بحث</div>
+<a href="index.html" class="back">🔙 رجوع</a>
+<script>
+let quranData = null;
+
+// تحميل البيانات مرة واحدة
+fetch('https://cdn.jsdelivr.net/npm/quran-json@3.1.2/dist/quran.json')
+  .then(res => res.json())
+  .then(data => { quranData = data.data; })
+  .catch(err => {
+    document.getElementById('results').textContent = 'فشل التحميل، تحقق من الاتصال بالإنترنت.';
+    console.error(err);
+  });
+
+function searchAyahs() {
+  const q = document.getElementById('query').value.trim();
+  if (!q || !quranData) {
+    document.getElementById('results').textContent = 'الرجاء كتابة كلمة للبحث.';
+    return;
+  }
+  let results = [];
+  quranData.forEach(surah => {
+    surah.ayahs.forEach((ayah, idx) => {
+      if (ayah.includes(q)) {
+        results.push(`<div class="result">
+          <div class="surah-name">${surah.name} - آية ${idx+1}</div>
+          ${ayah}
+        </div>`);
+      }
+    });
+  });
+  document.getElementById('results').innerHTML = results.length 
+    ? results.join('') 
+    : 'لم يتم العثور على نتائج.';
+}
+</script>
+</body>
+</html>
